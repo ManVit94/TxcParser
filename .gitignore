@@ -1,6 +1,6 @@
 # Build output
-bin/
-obj/
+**/bin/
+**/obj/
 
 # Rider / VS / VS Code
 .idea/
@@ -12,5 +12,5 @@ obj/
 .DS_Store
 
 # Activity data — keep the folder, ignore the files
-Activities/*.tcx
-Activities/*.json
+**/Activities/*.tcx
+**/Activities/*.json
