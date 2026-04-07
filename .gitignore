@@ -1,0 +1,16 @@
+# Build output
+bin/
+obj/
+
+# Rider / VS / VS Code
+.idea/
+.vs/
+.vscode/
+*.user
+
+# macOS
+.DS_Store
+
+# Activity data — keep the folder, ignore the files
+Activities/*.tcx
+Activities/*.json
