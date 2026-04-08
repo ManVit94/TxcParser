@@ -43,6 +43,14 @@
   font-size: 1.1rem;
 }
 
+.app-logo {
+  width: 90px;
+  height: 90px;
+  margin-bottom: 1rem;
+  border-radius: 20px;
+  box-shadow: 0 4px 20px rgba(236, 72, 153, 0.4);
+}
+
 .upload-card {
   width: 100%;
   max-width: 600px;
