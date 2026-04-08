@@ -6,6 +6,7 @@ export default defineConfig({
   plugins: [react()],
   base: '/TxcParser/',
   build: {
-    outDir: 'docs'
+    outDir: '../../docs',
+    emptyOutDir: true
   }
 })
