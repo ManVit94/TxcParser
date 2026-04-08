@@ -20,7 +20,17 @@ public static class TcxParser
     {
         Console.WriteLine($"Reading: {filePath}");
         var doc = XDocument.Load(filePath);
+        return ParseDocument(doc);
+    }
 
+    public static Activity Parse(Stream stream)
+    {
+        var doc = XDocument.Load(stream);
+        return ParseDocument(doc);
+    }
+
+    private static Activity ParseDocument(XDocument doc)
+    {
         var activityEl = doc.Root!
             .Element(Ns + "Activities")!
             .Element(Ns + "Activity")!;
@@ -48,8 +58,6 @@ public static class TcxParser
                 HeartRate      = ParseInt(tp.Element(Ns + "HeartRateBpm")?.Element(Ns + "Value")?.Value)
             })
             .ToList();
-
-        Console.WriteLine($"Parsed {trackpoints.Count} trackpoints.");
 
         return new Activity
         {

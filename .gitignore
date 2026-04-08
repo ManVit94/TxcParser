@@ -14,3 +14,14 @@
 # Activity data — keep the folder, ignore the files
 **/Activities/*.tcx
 **/Activities/*.json
+
+# Node/React Frontend
+**/node_modules/
+**/dist/
+**/dist-ssr/
+*.local
+.env.local
+.env.*.local
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
