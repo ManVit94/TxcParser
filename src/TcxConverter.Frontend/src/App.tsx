@@ -122,7 +122,7 @@ function App() {
       <div className="background-glow"></div>
       
       <header className="header">
-        <img src="/icon.png" alt="App Logo" className="app-logo" />
+        <img src={`${import.meta.env.BASE_URL}icon.png`} alt="App Logo" className="app-logo" />
         <h1>TCX to JSON</h1>
         <p>Convert your Garmin TCX activities into beautiful JSON payloads</p>
       </header>
