@@ -182,6 +182,47 @@
   gap: 1rem;
 }
 
+.options-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.options-container label {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+  text-align: left;
+}
+
+.select-input {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--glass-border);
+  color: var(--text-primary);
+  padding: 0.8rem 1rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  outline: none;
+  font-family: var(--font-family);
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fbcfe8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  background-size: 1em;
+  transition: all 0.2s ease;
+}
+
+.select-input:focus, .select-input:hover {
+  border-color: var(--accent-color);
+  background: rgba(236, 72, 153, 0.08);
+}
+
+.select-input option {
+  background: var(--bg-primary);
+  color: var(--text-primary);
+}
+
 @keyframes slideUp {
   from {
     opacity: 0;

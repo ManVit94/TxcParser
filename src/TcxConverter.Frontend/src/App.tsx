@@ -6,6 +6,7 @@ function App() {
   const [dragActive, setDragActive] = useState(false);
   const [file, setFile] = useState<File | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [runningType, setRunningType] = useState<'Treadmill' | 'Outdoor'>('Treadmill');
   const [status, setStatus] = useState<{ message: string; type: 'success' | 'error' | '' }>({ message: '', type: '' });
   const [resultData, setResultData] = useState<string | null>(null);
   const [activityPreview, setActivityPreview] = useState<any>(null);
@@ -74,7 +75,7 @@ function App() {
           const xmlText = e.target?.result as string;
           
           // Parse directly in the browser!
-          const parsedActivity = parseTcx(xmlText);
+          const parsedActivity = parseTcx(xmlText, runningType);
           
           const jsonString = JSON.stringify(parsedActivity, null, 2);
           
@@ -106,11 +107,16 @@ function App() {
   const handleDownload = () => {
     if (!resultData) return;
     
+    const date = activityPreview?.startTime ? new Date(activityPreview.startTime) : new Date();
+    const yyyy = date.getFullYear();
+    const MM = String(date.getMonth() + 1).padStart(2, '0');
+    const dd = String(date.getDate()).padStart(2, '0');
+    
     const blob = new Blob([resultData], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = file?.name.replace('.tcx', '.json') || 'activity.json';
+    a.download = `${yyyy}-${MM}-${dd}-${runningType}.json`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -146,6 +152,19 @@ function App() {
             accept=".tcx"
             onChange={handleChange}
           />
+        </div>
+
+        <div className="options-container">
+          <label htmlFor="running-type-select">Running Type</label>
+          <select 
+            id="running-type-select" 
+            className="select-input"
+            value={runningType}
+            onChange={(e) => setRunningType(e.target.value as 'Treadmill' | 'Outdoor')}
+          >
+            <option value="Treadmill">Treadmill</option>
+            <option value="Outdoor">Outdoor</option>
+          </select>
         </div>
 
         {status.message && (

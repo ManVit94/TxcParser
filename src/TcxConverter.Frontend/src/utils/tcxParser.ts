@@ -14,9 +14,10 @@ export interface Activity {
   averageHeartRate: number;
   maximumHeartRate: number;
   trackpoints: Trackpoint[];
+  runningType: 'Treadmill' | 'Outdoor';
 }
 
-export function parseTcx(xmlText: string): Activity {
+export function parseTcx(xmlText: string, runningType: 'Treadmill' | 'Outdoor' = 'Treadmill'): Activity {
   const parser = new DOMParser();
   const doc = parser.parseFromString(xmlText, "text/xml");
 
@@ -28,21 +29,21 @@ export function parseTcx(xmlText: string): Activity {
 
   // Define a helper to safely get elements regardless of namespace prefixes
   const getEl = (parent: Element | Document, tagName: string): Element | null => {
-      // In DOMParser, getting elements by tag name can be namespace sensitive.
-      // We'll use a lenient approach by stripping namespaces if needed or jumping straight to localName
-      const elements = parent.getElementsByTagNameNS("*", tagName);
-      if (elements.length > 0) return elements[0];
-      
-      const regularElements = parent.getElementsByTagName(tagName);
-      return regularElements.length > 0 ? regularElements[0] : null;
+    // In DOMParser, getting elements by tag name can be namespace sensitive.
+    // We'll use a lenient approach by stripping namespaces if needed or jumping straight to localName
+    const elements = parent.getElementsByTagNameNS("*", tagName);
+    if (elements.length > 0) return elements[0];
+
+    const regularElements = parent.getElementsByTagName(tagName);
+    return regularElements.length > 0 ? regularElements[0] : null;
   };
-  
+
   const getEls = (parent: Element | Document, tagName: string): Element[] => {
-      let elements = parent.getElementsByTagNameNS("*", tagName);
-      if (elements.length === 0) {
-          elements = parent.getElementsByTagName(tagName);
-      }
-      return Array.from(elements);
+    let elements = parent.getElementsByTagNameNS("*", tagName);
+    if (elements.length === 0) {
+      elements = parent.getElementsByTagName(tagName);
+    }
+    return Array.from(elements);
   };
 
   const parseNum = (val: string | null | undefined): number => {
@@ -66,10 +67,10 @@ export function parseTcx(xmlText: string): Activity {
   const idEl = getEl(activityEl, "Id");
   const id = idEl?.textContent || "";
   const startTime = lapEl.getAttribute("StartTime") || "";
-  
+
   const totalSecEl = getEl(lapEl, "TotalTimeSeconds");
   const totalSec = parseNum(totalSecEl?.textContent);
-  
+
   const distEl = getEl(lapEl, "DistanceMeters");
   const dist = parseNum(distEl?.textContent);
 
@@ -89,14 +90,14 @@ export function parseTcx(xmlText: string): Activity {
   const trackpoints: Trackpoint[] = trackEls.map(tp => {
     const timeEl = getEl(tp, "Time");
     const tpDistEl = getEl(tp, "DistanceMeters");
-    
+
     let hrVal = 0;
     const hrEl = getEl(tp, "HeartRateBpm");
     if (hrEl) {
-       const hrValueEl = getEl(hrEl, "Value");
-       hrVal = parseNum(hrValueEl?.textContent);
+      const hrValueEl = getEl(hrEl, "Value");
+      hrVal = parseNum(hrValueEl?.textContent);
     }
-    
+
     return {
       time: timeEl?.textContent || "",
       distanceMeters: parseNum(tpDistEl?.textContent),
@@ -106,6 +107,7 @@ export function parseTcx(xmlText: string): Activity {
 
   return {
     sport,
+    runningType,
     id,
     startTime,
     totalTimeSeconds: totalSec,
