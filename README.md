@@ -66,13 +66,13 @@ Each `.json` file contains the following fields:
 
 ## Web Dashboard
 
-A React-based web interface is available to effortlessly convert files directly in your browser. 
+A React-based web interface is available to effortlessly convert files directly in your browser.
 1. Navigate to `src/TcxConverter.Frontend/` and run `npm run dev` to start the app.
 2. Drag and drop your `.tcx` file into the UI.
 3. Select your **Running Type** (e.g. *Outdoor* or *Treadmill*).
 4. The file will be parsed internally and downloaded safely using the format: `{yyyy}-{MM}-{dd}-{runningType}.json`.
 
-## Project Structure
+## Project Structure1
 
 ```
 TcxConverter/
