@@ -131,6 +131,7 @@ function App() {
         <img src={`${import.meta.env.BASE_URL}icon.png`} alt="App Logo" className="app-logo" />
         <h1>TCX to JSON</h1>
         <p>Convert your Garmin TCX activities into beautiful JSON payloads</p>
+        <span className="app-version" style={{ fontSize: '0.8rem', opacity: 0.7 }}>{__APP_VERSION__}</span>
       </header>
 
       <main className="upload-card glass-panel">
