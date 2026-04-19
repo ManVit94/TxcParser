@@ -1,67 +1,26 @@
 # TcxConverter
 
-A .NET console application that reads Garmin `.tcx` activity files, parses them into structured objects, and converts them to clean `.json` files.
+A React-based web interface for converting Garmin `.tcx` activity files into structured `.json` output.
 
 ## Requirements
 
-- [.NET 10 SDK](https://dotnet.microsoft.com/download)
+- [Node.js](https://nodejs.org/) 18+ or compatible runtime
+- `npm` 10+ or Yarn
 
 ## Usage
 
-1. Place your `.tcx` files inside the `Activities/` folder.
-2. Run the converter from the project root:
+1. Open a terminal in the `src/` folder.
+2. Install dependencies:
 
 ```bash
-dotnet run
+cd src
+npm install
 ```
 
-Each `.tcx` file will produce a matching `.json` file in the same `Activities/` folder.
+3. Start the app:
 
-### Example
-
-```
-Activities/
-├── run_morning.tcx   →   run_morning.json
-├── run_evening.tcx   →   run_evening.json
-```
-
-Console output:
-
-```
-Found 2 .tcx file(s) in 'Activities'
-
-[1/2] Parsing: run_morning.tcx
-  ✓ Written → run_morning.json (243.1 KB)
-
-[2/2] Parsing: run_evening.tcx
-  ✓ Written → run_evening.json (180.4 KB)
-
-Done. 2 converted, 0 failed.
-```
-
-## Output Format
-
-Each `.json` file contains the following fields:
-
-```json
-{
-  "sport": "Running",
-  "runningType": "Outdoor",
-  "id": "2026-04-05T08:52:12.000Z",
-  "startTime": "2026-04-05T08:52:12.000Z",
-  "totalTimeSeconds": 2067.906,
-  "distanceMeters": 3855.59,
-  "calories": 281,
-  "averageHeartRate": 160,
-  "maximumHeartRate": 171,
-  "trackpoints": [
-    {
-      "time": "2026-04-05T08:52:12.000Z",
-      "distanceMeters": 0.0,
-      "heartRate": 108
-    }
-  ]
-}
+```bash
+npm run dev
 ```
 
 ## Web Dashboard
@@ -76,16 +35,16 @@ A React-based web interface is available to effortlessly convert files directly 
 
 ```
 TcxConverter/
-├── Activities/          ← place .tcx files here (gitignored)
-├── Models/
-│   └── Activity.cs      ← output data model
-├── Parsers/
-│   └── TcxParser.cs     ← XML parser
-├── Program.cs           ← entry point
-└── TcxConverter.csproj
+├── src/                 ← frontend application root
+│   ├── package.json
+│   ├── tsconfig.json
+│   ├── vite.config.ts
+│   ├── public/
+│   └── src/             ← React app source files
+└── README.md
 ```
 
-## Notes11
+## Notes
 
-- Activity data files (`.tcx` / `.json`) are excluded from version control via `.gitignore`.
-- The parser supports the standard Garmin TCX schema (`TrainingCenterDatabase/v2`).
+- The repository no longer contains the legacy .NET console application.
+- The frontend app runs from `src/` and uses Vite + React.
