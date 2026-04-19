@@ -17,7 +17,7 @@ export default defineConfig({
     __APP_VERSION__: JSON.stringify(appVersion),
   },
   build: {
-    outDir: '../../docs',
+    outDir: '../docs',
     emptyOutDir: true
   }
 })
