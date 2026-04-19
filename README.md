@@ -85,7 +85,7 @@ TcxConverter/
 └── TcxConverter.csproj
 ```
 
-## Notes
+## Notes11
 
 - Activity data files (`.tcx` / `.json`) are excluded from version control via `.gitignore`.
 - The parser supports the standard Garmin TCX schema (`TrainingCenterDatabase/v2`).
