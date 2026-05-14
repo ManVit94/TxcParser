@@ -7,6 +7,7 @@ function App() {
   const [file, setFile] = useState<File | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [runningType, setRunningType] = useState<'Treadmill' | 'Outdoor'>('Treadmill');
+  const [showModal, setShowModal] = useState(false);
   const [status, setStatus] = useState<{ message: string; type: 'success' | 'error' | '' }>({ message: '', type: '' });
   const [resultData, setResultData] = useState<string | null>(null);
   const [activityPreview, setActivityPreview] = useState<any>(null);
@@ -60,11 +61,12 @@ function App() {
     inputRef.current?.click();
   };
 
-  const handleConvert = async () => {
+  const handleConvert = async (type: 'Treadmill' | 'Outdoor') => {
     if (!file) return;
 
     setIsLoading(true);
     setStatus({ message: 'Converting...', type: '' });
+    setShowModal(false);
     
     try {
       // Use FileReader to read the file locally
@@ -75,7 +77,8 @@ function App() {
           const xmlText = e.target?.result as string;
           
           // Parse directly in the browser!
-          const parsedActivity = parseTcx(xmlText, runningType);
+          const parsedActivity = parseTcx(xmlText, type);
+          setRunningType(type);
           
           const jsonString = JSON.stringify(parsedActivity, null, 2);
           
@@ -155,19 +158,6 @@ function App() {
           />
         </div>
 
-        <div className="options-container">
-          <label htmlFor="running-type-select">Running Type</label>
-          <select 
-            id="running-type-select" 
-            className="select-input"
-            value={runningType}
-            onChange={(e) => setRunningType(e.target.value as 'Treadmill' | 'Outdoor')}
-          >
-            <option value="Treadmill">Treadmill</option>
-            <option value="Outdoor">Outdoor</option>
-          </select>
-        </div>
-
         {status.message && (
           <div className={`status-message ${status.type}`}>
             {status.message}
@@ -203,7 +193,7 @@ function App() {
           {!resultData ? (
             <button 
               className="button-primary" 
-              onClick={handleConvert} 
+              onClick={() => setShowModal(true)} 
               disabled={!file || isLoading}
             >
               {isLoading ? 'Processing...' : 'Convert to JSON'}
@@ -218,6 +208,22 @@ function App() {
           )}
         </div>
       </main>
+
+      {showModal && (
+        <div className="modal-overlay" onClick={() => setShowModal(false)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <h3>Select Activity Type</h3>
+            <div className="modal-buttons">
+              <button className="modal-button" onClick={() => handleConvert('Outdoor')}>
+                🌲 Outdoor
+              </button>
+              <button className="modal-button" onClick={() => handleConvert('Treadmill')}>
+                🏃 Treadmill
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
