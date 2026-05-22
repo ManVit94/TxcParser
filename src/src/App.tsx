@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { parseTcx } from './utils/tcxParser';
+import { parseTcx, type Activity } from './utils/tcxParser';
 import './App.css';
 
 function App() {
@@ -10,7 +10,7 @@ function App() {
   const [showModal, setShowModal] = useState(false);
   const [status, setStatus] = useState<{ message: string; type: 'success' | 'error' | '' }>({ message: '', type: '' });
   const [resultData, setResultData] = useState<string | null>(null);
-  const [activityPreview, setActivityPreview] = useState<any>(null);
+  const [activityPreview, setActivityPreview] = useState<Activity | null>(null);
   
   const inputRef = useRef<HTMLInputElement>(null);
 

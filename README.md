@@ -1,45 +1,84 @@
 # TcxConverter
 
-A React-based web interface for converting Garmin `.tcx` activity files into structured `.json` output.
+A client-side React app that converts Garmin `.tcx` activity files into structured `.json` — runs entirely in your browser, no file uploads, no server.
 
-## Requirements
+**Live app:** [manvit94.github.io/TxcParser](https://manvit94.github.io/TxcParser/)
 
-- [Node.js](https://nodejs.org/) 18+ or compatible runtime
-- `npm` 10+ or Yarn
+## Features
+
+- Drag & drop or click to select a `.tcx` file
+- Choose activity type — **Outdoor** or **Treadmill** — via a modal dialog
+- Activity summary preview (distance, time, calories, avg/max HR) shown before download
+- JSON downloaded locally with the filename `{yyyy}-{MM}-{dd}-{ActivityType}.json`
+- All parsing happens on-device; your data never leaves the browser
 
 ## Usage
 
-1. Open a terminal in the `src/` folder.
-2. Install dependencies:
+1. Open the [live app](https://manvit94.github.io/TxcParser/).
+2. Drag & drop your `.tcx` file onto the drop zone, or click to browse.
+3. Click **Convert to JSON** and select the activity type in the dialog.
+4. Review the activity summary, then click **Download JSON**.
+
+## JSON Output
+
+```json
+{
+  "sport": "Running",
+  "runningType": "Outdoor",
+  "id": "2024-03-15T07:30:00.000Z",
+  "startTime": "2024-03-15T07:30:00.000Z",
+  "totalTimeSeconds": 3600,
+  "distanceMeters": 10000,
+  "calories": 650,
+  "averageHeartRate": 152,
+  "maximumHeartRate": 178,
+  "trackpoints": [
+    {
+      "time": "2024-03-15T07:30:00.000Z",
+      "distanceMeters": 0,
+      "heartRate": 120
+    }
+  ]
+}
+```
+
+> Note: only the first `<Lap>` element is used for summary metrics. Multi-lap TCX files will show stats for the first lap only.
+
+## Development
 
 ```bash
 cd src
 npm install
-```
-
-3. Start the app:
-
-```bash
 npm run dev
 ```
 
-## Web Dashboard
+Requires Node.js 18+ and npm 10+.
 
-A React-based web interface is available to effortlessly convert files directly in your browser.
-1. Make sure you are in the `src/` folder and run `npm run dev` to start the app.
-2. Drag and drop your `.tcx` file into the UI.
-3. Select your **Running Type** (e.g. *Outdoor* or *Treadmill*).
-4. The file will be parsed internally and downloaded safely using the format: `{yyyy}-{MM}-{dd}-{runningType}.json`.
+## Build & Deploy
+
+The app builds into the `docs/` folder, which GitHub Pages serves from the `master` branch.
+
+```bash
+cd src
+npm run build   # outputs to ../docs/
+```
+
+Push `docs/` to `master` to update the live site. The base URL is `/TxcParser/` (set in `vite.config.ts`).
 
 ## Project Structure
 
 ```
 TcxConverter/
-├── src/                 ← frontend application root
+├── src/                    ← frontend root
 │   ├── package.json
-│   ├── tsconfig.json
 │   ├── vite.config.ts
+│   ├── tsconfig.json
 │   ├── public/
-│   └── src/             ← React app source files
+│   └── src/
+│       ├── App.tsx
+│       ├── App.css
+│       └── utils/
+│           └── tcxParser.ts
+├── docs/                   ← built output served by GitHub Pages
 └── README.md
 ```
