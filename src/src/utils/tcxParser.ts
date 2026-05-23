@@ -1,6 +1,6 @@
 export interface Trackpoint {
   time: string;
-  distanceMeters: number;
+  distanceMeters?: number;
   heartRate: number;
 }
 
@@ -17,7 +17,11 @@ export interface Activity {
   runningType: 'Treadmill' | 'Outdoor';
 }
 
-export function parseTcx(xmlText: string, runningType: 'Treadmill' | 'Outdoor' = 'Treadmill'): Activity {
+export function parseTcx(
+  xmlText: string,
+  runningType: 'Treadmill' | 'Outdoor' = 'Treadmill',
+  treadmillDistanceMeters?: number
+): Activity {
   const parser = new DOMParser();
   const doc = parser.parseFromString(xmlText, "text/xml");
 
@@ -86,10 +90,10 @@ export function parseTcx(xmlText: string, runningType: 'Treadmill' | 'Outdoor' =
   const maxHr = parseNum(maxHrValueEl?.textContent);
 
   // --- Trackpoints ---
+  const isTreadmill = runningType === 'Treadmill';
   const trackEls = getEls(lapEl, "Trackpoint");
   const trackpoints: Trackpoint[] = trackEls.map(tp => {
     const timeEl = getEl(tp, "Time");
-    const tpDistEl = getEl(tp, "DistanceMeters");
 
     let hrVal = 0;
     const hrEl = getEl(tp, "HeartRateBpm");
@@ -98,12 +102,26 @@ export function parseTcx(xmlText: string, runningType: 'Treadmill' | 'Outdoor' =
       hrVal = parseNum(hrValueEl?.textContent);
     }
 
-    return {
+    const point: Trackpoint = {
       time: timeEl?.textContent || "",
-      distanceMeters: parseNum(tpDistEl?.textContent),
       heartRate: hrVal
     };
+
+    // For Outdoor activities, keep per-trackpoint distance (from GPS).
+    // For Treadmill, distance is meaningless per-point — strip it.
+    if (!isTreadmill) {
+      const tpDistEl = getEl(tp, "DistanceMeters");
+      point.distanceMeters = parseNum(tpDistEl?.textContent);
+    }
+
+    return point;
   });
+
+  // Treadmill distance is user-provided (override) because GPS-derived
+  // values from the TCX file are unreliable on a treadmill.
+  const finalDistance = isTreadmill && treadmillDistanceMeters != null
+    ? treadmillDistanceMeters
+    : dist;
 
   return {
     sport,
@@ -111,7 +129,7 @@ export function parseTcx(xmlText: string, runningType: 'Treadmill' | 'Outdoor' =
     id,
     startTime,
     totalTimeSeconds: totalSec,
-    distanceMeters: dist,
+    distanceMeters: finalDistance,
     calories,
     averageHeartRate: avgHr,
     maximumHeartRate: maxHr,
