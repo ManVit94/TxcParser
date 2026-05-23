@@ -8,6 +8,8 @@ function App() {
   const [isLoading, setIsLoading] = useState(false);
   const [runningType, setRunningType] = useState<'Treadmill' | 'Outdoor'>('Treadmill');
   const [showModal, setShowModal] = useState(false);
+  const [modalStep, setModalStep] = useState<'choice' | 'distance'>('choice');
+  const [treadmillDistanceMeters, setTreadmillDistanceMeters] = useState('');
   const [status, setStatus] = useState<{ message: string; type: 'success' | 'error' | '' }>({ message: '', type: '' });
   const [resultData, setResultData] = useState<string | null>(null);
   const [activityPreview, setActivityPreview] = useState<Activity | null>(null);
@@ -61,13 +63,28 @@ function App() {
     inputRef.current?.click();
   };
 
-  const handleConvert = async (type: 'Treadmill' | 'Outdoor') => {
+  const openModal = () => {
+    setModalStep('choice');
+    setTreadmillDistanceMeters('');
+    setShowModal(true);
+  };
+
+  const closeModal = () => {
+    setShowModal(false);
+    setModalStep('choice');
+    setTreadmillDistanceMeters('');
+  };
+
+  const parsedTreadmillMeters = parseFloat(treadmillDistanceMeters);
+  const isTreadmillDistanceValid = !isNaN(parsedTreadmillMeters) && parsedTreadmillMeters > 0;
+
+  const handleConvert = async (type: 'Treadmill' | 'Outdoor', treadmillDistanceMeters?: number) => {
     if (!file) return;
 
     setIsLoading(true);
     setStatus({ message: 'Converting...', type: '' });
-    setShowModal(false);
-    
+    closeModal();
+
     try {
       // Use FileReader to read the file locally
       const reader = new FileReader();
@@ -75,9 +92,9 @@ function App() {
       reader.onload = async (e) => {
         try {
           const xmlText = e.target?.result as string;
-          
+
           // Parse directly in the browser!
-          const parsedActivity = parseTcx(xmlText, type);
+          const parsedActivity = parseTcx(xmlText, type, treadmillDistanceMeters);
           setRunningType(type);
           
           const jsonString = JSON.stringify(parsedActivity, null, 2);
@@ -191,9 +208,9 @@ function App() {
 
         <div className="result-container">
           {!resultData ? (
-            <button 
-              className="button-primary" 
-              onClick={() => setShowModal(true)} 
+            <button
+              className="button-primary"
+              onClick={openModal}
               disabled={!file || isLoading}
             >
               {isLoading ? 'Processing...' : 'Convert to JSON'}
@@ -210,17 +227,55 @@ function App() {
       </main>
 
       {showModal && (
-        <div className="modal-overlay" onClick={() => setShowModal(false)}>
+        <div className="modal-overlay" onClick={closeModal}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <h3>Select Activity Type</h3>
-            <div className="modal-buttons">
-              <button className="modal-button" onClick={() => handleConvert('Outdoor')}>
-                🌲 Outdoor
-              </button>
-              <button className="modal-button" onClick={() => handleConvert('Treadmill')}>
-                🏃 Treadmill
-              </button>
-            </div>
+            {modalStep === 'choice' ? (
+              <>
+                <h3>Select Activity Type</h3>
+                <div className="modal-buttons">
+                  <button className="modal-button" onClick={() => handleConvert('Outdoor')}>
+                    🌲 Outdoor
+                  </button>
+                  <button className="modal-button" onClick={() => setModalStep('distance')}>
+                    🏃 Treadmill
+                  </button>
+                </div>
+              </>
+            ) : (
+              <>
+                <h3>Treadmill Distance</h3>
+                <p className="modal-subtext">
+                  Enter the actual distance shown on the treadmill. This overrides the unreliable GPS distance from the TCX file.
+                </p>
+                <input
+                  className="modal-input"
+                  type="number"
+                  min="0"
+                  step="1"
+                  placeholder="Distance in meters (e.g. 5000)"
+                  value={treadmillDistanceMeters}
+                  onChange={(e) => setTreadmillDistanceMeters(e.target.value)}
+                  autoFocus
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' && isTreadmillDistanceValid) {
+                      handleConvert('Treadmill', parsedTreadmillMeters);
+                    }
+                  }}
+                />
+                <div className="modal-buttons">
+                  <button className="modal-button" onClick={() => setModalStep('choice')}>
+                    ← Back
+                  </button>
+                  <button
+                    className="modal-button modal-button-primary"
+                    onClick={() => handleConvert('Treadmill', parsedTreadmillMeters)}
+                    disabled={!isTreadmillDistanceValid}
+                  >
+                    Convert
+                  </button>
+                </div>
+              </>
+            )}
           </div>
         </div>
       )}

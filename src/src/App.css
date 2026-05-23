@@ -231,9 +231,50 @@
   font-size: 1.1rem;
 }
 
-.modal-button:hover {
+.modal-button:hover:not(:disabled) {
   background: rgba(236, 72, 153, 0.2);
   border-color: #ec4899;
+}
+
+.modal-button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.modal-button-primary {
+  background: var(--accent-color);
+  border-color: var(--accent-color);
+}
+
+.modal-button-primary:hover:not(:disabled) {
+  background: var(--accent-hover);
+  border-color: var(--accent-hover);
+}
+
+.modal-subtext {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  margin-bottom: 1.25rem;
+  line-height: 1.4;
+}
+
+.modal-input {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--glass-border);
+  color: #fff;
+  padding: 0.8rem 1rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  margin-bottom: 1.25rem;
+  box-sizing: border-box;
+  font-family: inherit;
+}
+
+.modal-input:focus {
+  outline: none;
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 3px rgba(236, 72, 153, 0.15);
 }
 
 @keyframes slideUp {
